@@ -44,11 +44,8 @@ class RunnerService():
     return { 'passed': testPassed, 'output': dockerContainerOutput }
 
   def runTestAndGetOutput(self, dockerImageName: DockerImageName, testCommand: str, identifier: uuid) -> str:
-    self.dockerService.pullImage(dockerImageName)
     dockerContainer = self.dockerService.runAndGetContainer(dockerImageName, testCommand, identifier)
     dockerContainerLogStream = dockerContainer.logs()
-    dockerContainer.stop()
-    dockerContainer.remove()
     
     dockerContainerOutput = ""
 
