@@ -1,23 +1,23 @@
-import env
-
-from typing import List
+import shutil
+import uuid
 from pathlib import Path
+from typing import List
+
+import env
 from models.run_request import RunRequestFile
 
+
 class RunnerFileService():
-  def createFile(self, filename: str, content: str) -> None:
-    file = Path(f"{env.PROJECT_TMP_DIRECTORY}/{filename}");
-    file.parent.mkdir(exist_ok=True, parents=True);
+  def createFile(self, filename: str, content: str, identifier: uuid) -> None:
+    file = Path(f"{env.PROJECT_TMP_DIRECTORY}/{identifier}/{filename}")
+    file.parent.mkdir(exist_ok=True, parents=True)
     file.write_text(content)
 
-  def createFiles(self, files: List[RunRequestFile]) -> None:
+  def createFiles(self, files: List[RunRequestFile], identifier: uuid) -> None:
     for file in files:
-      self.createFile(file.fileName, file.content)
+      self.createFile(file.fileName, file.content, identifier)
 
-  def deleteFile(self, fileName: str) -> None:
-    file = Path(f"{env.PROJECT_TMP_DIRECTORY}/{fileName}");
-    file.unlink()
-
-  def deleteFiles(self, files: List[RunRequestFile]) -> None:
-    for file in files:
-      self.deleteFile(file.fileName)
+  @staticmethod
+  def deleteDirectory(identifier: uuid) -> None:
+    directory = Path(f"{env.PROJECT_TMP_DIRECTORY}/{identifier}")
+    shutil.rmtree(directory)
